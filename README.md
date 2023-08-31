@@ -25,7 +25,7 @@ Approach:
 
 5.Overall, the outcome of this project is a complete and user-friendly solution for extracting, processing, and visualising data from the Phonepe pulse Github repository.
  
- Linkedin link:
+ Linkedin link:https://www.linkedin.com/posts/priyanka-pal-303367224_greetings-to-all-im-priyanka-and-id-like-activity-7103083863274352640-6fNq?utm_source=share&utm_medium=member_desktop
 
 
 
