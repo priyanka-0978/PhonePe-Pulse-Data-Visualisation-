@@ -5,6 +5,8 @@ from PIL import Image
 from streamlit_option_menu import option_menu
 import plotly.express as px
 import mysql.connector 
+import numpy as np
+
 
 # Setting up page configuration
 icon = Image.open(r"C:\Users\Priyanka\Downloads\phone_pe.png")
@@ -19,20 +21,18 @@ st.set_page_config(page_title= "PhonePe Pulse Data Visualization and Exploration
 
 st.sidebar.header(":violet[Hey! Welcome to the dashboard]")
 
-
-
 with st.sidebar:
     selected = option_menu("Menu", ["Home","Basic Insights","Top Charts","Explore Data","About"], 
                 menu_icon= "menu-button-wide",
                 default_index=0,
-                styles={"nav-link": {"font-size": "20px", "text-align": "left", "margin": "-2px", "--hover-color": "#6F36AD"},
+                styles={"nav-link": {"font-size": "15px", "text-align": "left", "margin": "-2px", "--hover-color": "#6F36AD"},
                         "nav-link-selected": {"background-color": "#6F36AD"}})
 
 #--------------------------------Connecting to Mysql--------------#
 
 mydb = mysql.connector.connect(host="localhost",
                    user="root",
-                   password="Priya1234",
+                   password="user_password",
                    database= "phone_pe",
                    port = "3306"
                   )
@@ -44,15 +44,18 @@ img=Image.open(r"C:\Users\Priyanka\Downloads\phone.png")
 
 if selected == "Home":
     st.subheader(":violet[PhonePe Pulse Data Visualization and Exploration]")
-
-    col1,col2 = st.columns([3,2],gap="medium")
+    col1,col2 = st.columns([3.5,2],gap="medium")
     with col1:
         st.markdown(":green[PhonePe has become one of the most popular digital payment platforms in India, with millions of users relying on it for their day-to-day transactions. The app is known for its simplicity, user-friendly interface, and fast and secure payment processing. It has also won several awards and accolades for its innovative features and contributions to the digital payments industry.]")
+      
         st.markdown(":blue[India's top fintech platform, announced the debut of PhonePe Pulse, India's first interactive website providing statistics, insights, and trends on digital payments in the country, on September 3, 2021. The PhonePe Pulse website displays over 2000 crores in customer transactions on an interactive map of India. PhonePe's data, with over 45% market share, is typical of the country's digital payment habits.]")
 
         st.markdown(":red[This web app is built to analyse the Phonepe transaction and users depending on various Years, Quarters, States, and Types of transaction and give a Geo visualization output based on given requirements.]")
+  
     with col2:
-         st.image(img)
+         st.write("")
+         st.write("")
+         st.image(img,width=350)
 
 #-------------------------------------------------Get some informtion from mysql data ---------------------------------------#
         
@@ -73,10 +76,13 @@ if selected == "Basic Insights":
     if select=="Top 10 States or Union Territory  based on transaction year and amount of transaction":
         mycursor.execute("SELECT DISTINCT States_OR_Union_Territory, Transaction_Year, SUM(Transaction_Amount) AS Total_Transaction_Amount FROM top_transaction GROUP BY States_OR_Union_Territory, Transaction_Year ORDER BY Total_Transaction_Amount DESC LIMIT 10");
         df=pd.DataFrame(mycursor.fetchall(), columns=['States_OR_Union_Territory','Transaction_Year', 'Transaction_Amount'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)
+      
     elif select=="Top 10 Registered-users based on States or Union Territory and District":
         mycursor.execute("SELECT DISTINCT States_OR_Union_Territory,District,SUM(RegisteredUsers) AS Registered_users FROM top_users GROUP BY States_OR_Union_Territory,District ORDER BY Registered_users DESC LIMIT 10");
         df=pd.DataFrame(mycursor.fetchall(), columns=['States_OR_Union_Territory','District','RegisteredUsers'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)
 
     elif select=="Top 10 Districts based on States or Union Territory and Count of transaction":
@@ -88,20 +94,25 @@ if selected == "Basic Insights":
     elif select=="Top 5 Transaction_Type based on Transaction_Amount":
         mycursor.execute("SELECT DISTINCT Transaction_Type, SUM(Transaction_Amount) AS Transaction_amount FROM top_transaction GROUP BY Transaction_Type ORDER BY Transaction_amount  DESC LIMIT 5");
         df = pd.DataFrame(mycursor.fetchall(), columns=['Transaction_Type', 'Transaction_Amount'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)
 
     elif select=="List of 10 States or Union Territory based on District and Count of transaction":
         mycursor.execute("SELECT DISTINCT States_OR_Union_Territory,District,SUM(Transaction_Count) AS Counts FROM map_transaction GROUP BY States_OR_Union_Territory,District ORDER BY Counts DESC LIMIT 10");
         df = pd.DataFrame(mycursor.fetchall(), columns=['States_OR_Union_Territory','District','Transaction_Count'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)
 
     elif select=="List of 10 Transaction_Count based on Districts and States or Union Territory":
         mycursor.execute("SELECT DISTINCT States_OR_Union_Territory , District, SUM(Transaction_Count) AS Counts FROM map_transaction GROUP BY States_OR_Union_Territory,District ORDER BY Counts ASC LIMIT 10");
         df = pd.DataFrame(mycursor.fetchall(),columns=['States_OR_Union_Territory ','District','Transaction_Count'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)
+      
     elif select=="List of 10 States or Union Territory based on Transaction Type and Amount of transaction":
         mycursor.execute("SELECT DISTINCT States_OR_Union_Territory,Transaction_Type, SUM(Transaction_Count) as Transaction_count FROM aggregated_transaction GROUP BY States_OR_Union_Territory,Transaction_Type ORDER BY Transaction_count DESC LIMIT 10");
         df = pd.DataFrame(mycursor.fetchall(),columns=['States_OR_Union_Territory ','Transaction_Type','Transaction_Count'])
+        df.index = np.arange(1, len(df)+1)
         st.write(df)    
 #-----------------------------------------------Top charts based on transaction and users data--------------------------------------------------------------#
 if selected=="Top Charts":
