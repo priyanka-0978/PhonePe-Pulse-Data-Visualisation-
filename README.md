@@ -7,11 +7,18 @@ This web app is built to analyse the Phonepe transaction and users depending on 
 **Technologies stacked :**
 
  1.Github Cloning
+ 
  2.Python
+ 
  3.Pandas
+ 
  4.MySQL
+ 
  5.Mysql-connector-python
- 6.Streamlit and Plotly. 
+ 
+ 6.Streamlit and Plotly
+
+ 7.Numpy
  
 **Approach:**
 
@@ -25,8 +32,7 @@ This web app is built to analyse the Phonepe transaction and users depending on 
 
 5.Overall, the outcome of this project is a complete and user-friendly solution for extracting, processing, and visualising data from the Phonepe pulse Github repository.
  
-**Linkedin link**:https://www.linkedin.com/posts/priyanka-pal-303367224_greetings-to-all-im-priyanka-and-id-like-activity-7103083863274352640-6fNq?utm_source=share&utm_medium=member_desktop
-
+**Linkedin link**:https://www.linkedin.com/posts/priyanka-pal-303367224_greetings-to-all-im-priyanka-and-id-like-activity-7106913413406060544-8A_7?utm_source=share&utm_medium=member_desktop
 
 
 
