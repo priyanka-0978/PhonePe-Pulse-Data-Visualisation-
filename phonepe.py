@@ -6,6 +6,7 @@ from streamlit_option_menu import option_menu
 import plotly.express as px
 import mysql.connector 
 import numpy as np
+import json
 
 
 # Setting up page configuration
@@ -22,7 +23,7 @@ st.set_page_config(page_title= "PhonePe Pulse Data Visualization and Exploration
 st.sidebar.header(":violet[Hey! Welcome to the dashboard]")
 
 with st.sidebar:
-    selected = option_menu("Menu", ["Home","Basic Insights","Top Charts","Explore Data","About"], 
+    selected = option_menu("Menu", ["Home","Basic Insights","Top Charts","Explore Data","GeoVisuals","About"], 
                 menu_icon= "menu-button-wide",
                 default_index=0,
                 styles={"nav-link": {"font-size": "15px", "text-align": "left", "margin": "-2px", "--hover-color": "#6F36AD"},
@@ -232,7 +233,53 @@ if selected =="Explore Data":
                   color_continuous_scale=px.colors.sequential.Agsunset)
       st.plotly_chart(fig,use_container_width=True)
 #-----------------------------------------------------------------------------------------------#
+if selected=="GeoVisuals":
+    option=st.radio("",["State wise Transaction Count","State wise Transaction Amount"],horizontal=True)
+    if option=="State wise Transaction Count":
+        mycursor.execute(f"select States_OR_Union_Territory,sum(Transaction_Count) as Transaction_Count,sum(Transaction_Amount) as Total_amount from aggregated_transaction group by States_OR_Union_Territory order by States_OR_Union_Territory  ")
 
+        df1 = pd.DataFrame(mycursor.fetchall(),columns=mycursor.column_names)
+        df2 = pd.read_csv(r"C:\Users\Priyanka\Downloads\Statenames.csv")
+        df1.Transaction_Count = df1.Transaction_Count.astype(np.int64)
+        df1.States_OR_Union_Territory = df2
+        fig = px.choropleth(df1,geojson=(json.load(open(r"C:\Users\Priyanka\Downloads\india_states.geojson.txt"))),
+                  featureidkey='properties.ST_NM',
+                  locations='States_OR_Union_Territory',
+                  color='Transaction_Count',
+                  color_continuous_scale='magenta',
+                  height=500)
+        fig.update_layout(title='State wise Transaction Count',
+                          title_x=0.25,
+                          title_y=0.93,
+                          title_font=dict(size=20),
+                          margin={"r":5,"t":5,"l":5,"b":5})
+
+        fig.update_geos(fitbounds="locations", visible=False)
+        st.plotly_chart(fig, use_container_width=True)
+        
+    if option=="State wise Transaction Amount":
+        mycursor.execute(f"select States_OR_Union_Territory,sum(Transaction_Count) as Total_Transactions,sum(Transaction_Amount) as Transaction_Amount from aggregated_transaction group by States_OR_Union_Territory order by States_OR_Union_Territory  ")
+        df1 = pd.DataFrame(mycursor.fetchall(),columns=mycursor.column_names)
+        df2 = pd.read_csv(r"C:\Users\Priyanka\Downloads\Statenames.csv")
+        df1.States_OR_Union_Territory = df2
+
+        fig = px.choropleth(df1,geojson=(json.load(open(r"C:\Users\Priyanka\Downloads\india_states.geojson.txt"))),
+                  featureidkey='properties.ST_NM',
+                  locations='States_OR_Union_Territory',
+                  color='Transaction_Amount',
+                  title='State wise Transaction Amount',
+                  color_continuous_scale='magenta',
+                  )
+
+        fig.update_layout(title='State wise Transaction Amount',
+                          title_x=0.25,
+                          title_y=0.93,
+                          height=500, 
+                          margin={"r":5,"t":5,"l":5,"b":5},
+                          title_font=dict(size=20))
+        fig.update_geos(fitbounds="locations", visible=False)
+        st.plotly_chart(fig,use_container_width=True)
+#----------------------------------------------------------------------------------------------------------------#        
 if selected == "About":
     st.subheader(":red[About PhonePe]")
     st.markdown("India's top financial platform, PhonePe, has more than 300 million registered customers. Users of PhonePe can send and receive money, recharge mobile phones and DTH, pay for goods and services at merchant locations, purchase gold, and make investments.")
